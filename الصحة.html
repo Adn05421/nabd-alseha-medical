@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نبض الصحة الطبية | Nabd Al-Seha Medical</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--p:#1976D2;--s:#42A5F5;--g:#2EAD72;--lg:#81C784;--bg:#F5F8FC;--card:#fff;--tx:#263238;--tx2:#607080;--w:#F9A825;--e:#D32F2F;--bd:#dfe6ee;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121a22;--card:#1b2631;--tx:#e8eef4;--tx2:#9db0c2;--bd:#2c3a48}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Cairo,Inter,system-ui,sans-serif;font-size:15px}
+body.en{font-family:Inter,Cairo,sans-serif}
+header{background:var(--p);color:#fff;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+header h1{font-size:18px;margin:0;flex:1}
+nav{display:flex;gap:6px;overflow-x:auto;padding:8px 10px;background:var(--card);border-bottom:1px solid var(--bd)}
+nav button{white-space:nowrap;border:0;background:none;color:var(--tx);padding:9px 14px;border-radius:8px;font:inherit;cursor:pointer}
+nav button.on{background:var(--p);color:#fff}
+main{padding:14px;max-width:1200px;margin:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px}
+.kpi b{display:block;font-size:22px;margin-top:4px}
+.kpi span{color:var(--tx2);font-size:13px}
+.btn{border:0;background:var(--p);color:#fff;padding:9px 14px;border-radius:8px;font:inherit;cursor:pointer}
+.btn.g{background:var(--g)}.btn.r{background:var(--e)}.btn.o{background:none;color:var(--p);border:1px solid var(--p)}
+.btn.sm{padding:4px 9px;font-size:13px}
+input,select,textarea{font:inherit;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);width:100%}
+input:focus,select:focus,button:focus-visible{outline:3px solid var(--s)}
+label{font-size:13px;color:var(--tx2);display:block}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:10px}
+.row>*{flex:1;min-width:130px}
+.row>.btn{flex:0 0 auto}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px;border-bottom:1px solid var(--bd);text-align:start;white-space:nowrap}
+th{color:var(--tx2);font-weight:600}
+.tag{padding:2px 9px;border-radius:99px;font-size:12px;color:#fff;background:var(--g)}
+.tag.low,.tag.near{background:var(--w);color:#222}.tag.out,.tag.exp{background:var(--e)}
+.al{padding:8px 10px;border-radius:8px;margin-bottom:6px;background:rgba(249,168,37,.15);border-inline-start:4px solid var(--w)}
+.al.e{background:rgba(211,47,47,.12);border-color:var(--e)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:20;padding:12px}
+.modal>div{background:var(--card);border-radius:12px;padding:16px;max-width:560px;width:100%;max-height:90vh;overflow:auto}
+#toast{position:fixed;bottom:20px;inset-inline:20px;margin:auto;max-width:420px;background:#263238;color:#fff;padding:10px 14px;border-radius:8px;display:none;z-index:30;text-align:center}
+.mut{color:var(--tx2)}
+footer{text-align:center;padding:16px 12px 24px;color:var(--tx2);font-size:13px;border-top:1px solid var(--bd);margin-top:10px}
+footer a{color:var(--p);text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+<header><h1 id="ttl"></h1><button class="btn o" style="color:#fff;border-color:#fff" onclick="go('dash')" id="bell"></button><button class="btn o" style="color:#fff;border-color:#fff" onclick="setLang()" id="lg"></button></header>
+<nav id="nav"></nav>
+<main id="app"></main>
+<footer id="ft"></footer>
+<div id="toast"></div>
+<script>
+const TT=`dash|لوحة التحكم|Dashboard
+inv|المخزون|Inventory
+pos|نقطة البيع|Point of Sale
+pur|المشتريات|Purchases
+sup|الموردون|Suppliers
+rep|التقارير|Reports
+set|الإعدادات|Settings
+salesToday|مبيعات اليوم|Sales today
+salesMonth|مبيعات الشهر|Sales this month
+invToday|فواتير اليوم|Invoices today
+invVal|قيمة المخزون|Inventory value
+low|مخزون منخفض|Low stock
+exp|منتهية|Expired
+near|قاربت الانتهاء|Near expiry
+purTot|إجمالي المشتريات|Total purchases
+add|إضافة|Add
+save|حفظ|Save
+cancel|إلغاء|Cancel
+name|الاسم|Name
+gen|الاسم العلمي|Generic name
+bc|الباركود|Barcode
+cat|الفئة|Category
+lot|رقم التشغيلة|Batch no.
+mfg|تاريخ الإنتاج|Mfg date
+expd|تاريخ الانتهاء|Expiry date
+buy|سعر الشراء|Purchase price
+sell|سعر البيع|Selling price
+qty|الكمية|Quantity
+min|الحد الأدنى|Min stock
+supp|المورد|Supplier
+status|الحالة|Status
+ok|متوفر|In stock
+out|نفد|Out of stock
+search|بحث بالاسم أو الباركود|Search name or barcode
+cart|السلة|Cart
+total|الإجمالي|Total
+disc|الخصم|Discount
+tax|الضريبة %|Tax %
+pay|الدفع|Payment
+cash|نقدًا|Cash
+card|بطاقة|Card
+done|إتمام البيع|Complete sale
+empty|لا توجد بيانات بعد|No data yet
+refund|استرجاع|Refund
+refunded|مسترجعة|Refunded
+edit|تعديل|Edit
+del|حذف|Delete
+act|إجراءات|Actions
+sample|تحميل بيانات تجريبية|Load sample data
+alerts|التنبيهات|Alerts
+noAl|لا توجد تنبيهات|No alerts
+phone|الهاتف|Phone
+email|البريد|Email
+contact|المسؤول|Contact
+terms|شروط الدفع|Payment terms
+active|نشط|Active
+paid|مدفوعة|Paid
+part|مدفوعة جزئيًا|Partial
+unpaid|غير مدفوعة|Unpaid
+ref|مرجع المورد|Supplier ref
+confirm|تأكيد الشراء (يحدّث المخزون)|Confirm purchase (updates stock)
+from|من|From
+to|إلى|To
+gross|إجمالي المبيعات|Gross sales
+refs|المرتجعات|Refunds
+cogs|تكلفة البضاعة|Cost of goods
+profit|مجمل الربح التقديري|Est. gross profit
+export|تصدير CSV|Export CSV
+pname|اسم الصيدلية|Pharmacy name
+warn|أيام تنبيه الانتهاء|Expiry warning days
+proto|نموذج أولي: البيانات محفوظة في متصفحك فقط وليست قاعدة بيانات متعددة المستخدمين.|Prototype: data is stored in this browser only, not a multi-user database.
+sold|الفواتير|Invoices
+bal|المستحق للموردين|Owed to suppliers
+invno|رقم الفاتورة|Invoice no.
+date|التاريخ|Date
+desc|الوصف|Description
+rec|المستلم|Received
+chg|الباقي|Change
+reset|مسح كل البيانات|Reset all data`.split('\n').reduce((o,l)=>{const[a,b,c]=l.split('|');o[a]={ar:b,en:c};return o},{});
+const t=k=>(TT[k]||{})[S.set.lang]||k;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function init(){return{meds:[],sups:[],sales:[],purch:[],mov:[],set:{name:'نبض الصحة الطبية',warn:90,tax:15,lang:'ar',theme:''}}}
+let S;try{S=JSON.parse(localStorage.getItem('nh'))||init()}catch(e){S=init()}
+if(S.set.name==='صيدلية نبض الحياة')S.set.name='نبض الصحة الطبية';
+const save=()=>{try{localStorage.setItem('nh',JSON.stringify(S))}catch(e){}};
+let tab='dash',cart=[],pcart=[],q='',flt='';
+const today=()=>new Date().toISOString().slice(0,10);
+const nf=v=>(+v||0).toLocaleString(S.set.lang==='ar'?'ar-SA':'en-US',{maximumFractionDigits:2});
+const cur=v=>nf(v)+' '+(S.set.lang==='ar'?'ر.س':'SAR');
+const dd=d=>Math.ceil((new Date(d)-new Date(today()))/864e5);
+const isExp=b=>dd(b.exp)<0;
+const tot=m=>m.batches.reduce((a,b)=>a+b.qty,0);
+const sellable=m=>m.batches.filter(b=>!isExp(b)).reduce((a,b)=>a+b.qty,0);
+function st(m){const q=tot(m);if(m.batches.some(b=>b.qty>0&&isExp(b)))return'exp';if(q<=0)return'out';if(m.batches.some(b=>b.qty>0&&dd(b.exp)<=S.set.warn))return'near';if(q<=m.min)return'low';return'ok'}
+const toast=m=>{const e=$('#toast');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',2800)};
+const supName=id=>(S.sups.find(s=>s.id==id)||{}).name||'-';
+const tag=s=>`<span class="tag ${s}">${t(s)}</span>`;
+function setLang(){S.set.lang=S.set.lang==='ar'?'en':'ar';save();draw()}
+function go(x){tab=x;q='';draw()}
+const DEV=()=>(S.set.lang==='ar'?'تطوير: <b>عدنان صبياني</b>':'Developed by <b>Adnan Sabyani</b>')+' | 📞 <a href="tel:+966509600071" dir="ltr">00966509600071</a>';
+function draw(){
+ const ar=S.set.lang==='ar';document.documentElement.lang=S.set.lang;document.documentElement.dir=ar?'rtl':'ltr';document.body.className=ar?'':'en';
+ if(S.set.theme)document.documentElement.dataset.theme=S.set.theme;
+ $('#ttl').innerHTML='💊 '+esc(S.set.name)+' — '+t(tab)+'<small style="display:block;font-size:11px;font-weight:400;opacity:.9">'+(ar?'تطوير: عدنان صبياني':'Developed by Adnan Sabyani')+' · 00966509600071</small>';$('#lg').textContent=ar?'English':'العربية';
+ $('#bell').textContent='🔔 '+alerts().length;
+ $('#ft').innerHTML=(ar?'تطوير: <b>عدنان صبياني</b>':'Developed by <b>Adnan Sabyani</b>')+' &nbsp;|&nbsp; 📞 <a href="tel:+966509600071" dir="ltr">00966509600071</a>';
+ $('#nav').innerHTML=['dash','inv','pos','pur','sup','rep','set'].map(k=>`<button class="${k===tab?'on':''}" onclick="go('${k}')">${t(k)}</button>`).join('');
+ $('#app').innerHTML=V[tab]();
+}
+function alerts(){const a=[];S.meds.forEach(m=>{const s=st(m);if(s!=='ok')a.push({s,m:m.name})});S.purch.filter(p=>p.confirmed&&p.status!=='paid').forEach(p=>a.push({s:'unpaid',m:p.no}));return a}
+function modal(h){const d=document.createElement('div');d.className='modal';d.id='md';d.innerHTML='<div>'+h+'</div>';document.body.appendChild(d)}
+const close=()=>{const m=$('#md');if(m)m.remove()};
+const val=id=>$('#'+id).value.trim();
+const fld=(id,l,type='text',v='')=>`<div><label>${t(l)}</label><input id="${id}" type="${type}" value="${esc(v)}"></div>`;
+const empty=`<p class="mut">${'—'}</p>`;
+function inSale(f,t2){return S.sales.filter(s=>s.date>=f&&s.date.slice(0,10)<=t2)}
+const V={
+dash(){
+ const td=today(),mo=td.slice(0,7);
+ const sT=S.sales.filter(s=>s.date.slice(0,10)===td&&!s.refunded),sM=S.sales.filter(s=>s.date.slice(0,7)===mo&&!s.refunded);
+ const sum=a=>a.reduce((x,s)=>x+s.total,0);
+ const cnt=k=>S.meds.filter(m=>st(m)===k).length;
+ const invV=S.meds.reduce((a,m)=>a+m.batches.reduce((x,b)=>x+b.qty*m.buy,0),0);
+ const pT=S.purch.filter(p=>p.confirmed).reduce((a,p)=>a+p.total,0);
+ const K=[['salesToday',cur(sum(sT))],['salesMonth',cur(sum(sM))],['invToday',sT.length],['invVal',cur(invV)],['low',cnt('low')+cnt('out')],['exp',cnt('exp')],['near',cnt('near')],['purTot',cur(pT)]];
+ const days=[...Array(7)].map((_,i)=>{const d=new Date(Date.now()-(6-i)*864e5).toISOString().slice(0,10);return{d:d.slice(5),v:sum(S.sales.filter(s=>s.date.slice(0,10)===d&&!s.refunded))}});
+ const mx=Math.max(1,...days.map(d=>d.v));
+ const svg=`<svg viewBox="0 0 350 140" width="100%" style="max-height:200px">${days.map((d,i)=>`<rect x="${i*50+8}" y="${110-d.v/mx*100}" width="34" height="${d.v/mx*100}" fill="#42A5F5" rx="4"/><text x="${i*50+25}" y="128" font-size="10" text-anchor="middle" fill="currentColor">${d.d}</text>`).join('')}</svg>`;
+ const al=alerts();
+ return `<div class="grid">${K.map(([k,v])=>`<div class="card kpi"><span>${t(k)}</span><b>${v}</b></div>`).join('')}</div>
+ <div class="row"><button class="btn" onclick="go('pos')">🛒 ${t('pos')}</button><button class="btn g" onclick="medForm()">＋ ${t('add')}</button><button class="btn o" onclick="go('pur')">${t('pur')}</button><button class="btn o" onclick="go('rep')">${t('rep')}</button></div>
+ <div class="card"><b>${t('salesToday')} / 7</b>${svg}</div>
+ <div class="card"><b>${t('alerts')}</b><br><br>${al.length?al.map(a=>`<div class="al ${a.s==='exp'||a.s==='out'?'e':''}">${tag(a.s)} ${esc(a.m)}</div>`).join(''):`<span class="mut">${t('noAl')}</span>`}</div>
+ ${S.meds.length?'':`<button class="btn o" onclick="sample()">${t('sample')}</button>`}<p class="mut">${t('proto')}</p>`},
+inv(){
+ const L=S.meds.filter(m=>!q||[m.name,m.gen,m.bc].join(' ').toLowerCase().includes(q.toLowerCase())||m.batches.some(b=>b.lot===q)).filter(m=>!flt||st(m)===flt);
+ return `<div class="row"><input id="q" placeholder="${t('search')}" value="${esc(q)}" oninput="q=this.value;fi()"><select onchange="flt=this.value;draw()"><option value="">${t('status')}</option>${['ok','low','out','near','exp'].map(k=>`<option value="${k}" ${flt===k?'selected':''}>${t(k)}</option>`).join('')}</select><button class="btn g" onclick="medForm()">＋ ${t('add')}</button><button class="btn o" onclick="csv('inv')">${t('export')}</button></div>
+ <div class="card tw"><table><tr><th>#</th><th>${t('name')}</th><th>${t('bc')}</th><th>${t('cat')}</th><th>${t('expd')}</th><th>${t('sell')}</th><th>${t('qty')}</th><th>${t('supp')}</th><th>${t('status')}</th><th>${t('act')}</th></tr>
+ ${L.map(m=>{const nx=m.batches.filter(b=>b.qty>0).map(b=>b.exp).sort()[0]||'-';return `<tr><td>${m.id}</td><td>${esc(m.name)}<br><small class="mut">${esc(m.gen)}</small></td><td>${esc(m.bc)}</td><td>${esc(m.cat)}</td><td>${nx}</td><td>${nf(m.sell)}</td><td>${tot(m)}</td><td>${esc(supName(m.sup))}</td><td>${tag(st(m))}</td><td><button class="btn sm o" onclick="medForm(${m.id})">${t('edit')}</button> <button class="btn sm r" onclick="delMed(${m.id})">${t('del')}</button></td></tr>`}).join('')||`<tr><td colspan="10" class="mut">${t('empty')}</td></tr>`}</table></div>`},
+pos(){
+ const sub=cart.reduce((a,c)=>a+c.qty*c.sell,0);
+ return `<div class="row"><input id="ps" placeholder="${t('search')}" autofocus onkeydown="if(event.key==='Enter')addCart(this)"><button class="btn" onclick="addCart($('#ps'))">${t('add')}</button></div>
+ <div class="card tw"><b>${t('cart')}</b><table>${cart.map((c,i)=>`<tr><td>${esc(c.name)}</td><td>${nf(c.sell)}</td><td style="width:90px"><input type="number" min="1" value="${c.qty}" onchange="cq(${i},this.value)"></td><td>${nf(c.qty*c.sell)}</td><td><button class="btn sm r" onclick="cart.splice(${i},1);draw()">✕</button></td></tr>`).join('')||`<tr><td class="mut">${t('empty')}</td></tr>`}</table></div>
+ <div class="card"><div class="row"><div><label>${t('disc')}</label><input id="dc" type="number" min="0" value="0" oninput="pt()"></div><div><label>${t('tax')}</label><input id="tx" type="number" min="0" value="${S.set.tax}" oninput="pt()"></div><div><label>${t('pay')}</label><select id="pm"><option value="cash">${t('cash')}</option><option value="card">${t('card')}</option></select></div><div><label>${t('rec')}</label><input id="rc" type="number" min="0" oninput="pt()"></div></div>
+ <h3>${t('total')}: <span id="tt">${cur(sub)}</span> &nbsp; <small class="mut">${t('chg')}: <span id="ch">0</span></small></h3><button class="btn g" onclick="sale()">✔ ${t('done')}</button> <button class="btn o" onclick="cart=[];draw()">${t('cancel')}</button></div>
+ <div class="card tw"><b>${t('sold')}</b><table>${S.sales.slice().reverse().slice(0,30).map(s=>`<tr><td>${s.no}</td><td>${s.date.slice(0,16).replace('T',' ')}</td><td>${s.items.map(i=>esc(i.name)+'×'+i.qty).join('، ')}</td><td>${cur(s.total)}</td><td>${s.refunded?`<span class="tag exp">${t('refunded')}</span>`:`<button class="btn sm o" onclick="refund('${s.no}')">${t('refund')}</button>`}</td></tr>`).join('')}</table></div>`},
+pur(){
+ const cs=pcart.reduce((a,c)=>a+c.qty*c.cost,0);
+ return `<div class="card"><div class="row"><div><label>${t('supp')}</label><select id="psup">${S.sups.filter(s=>s.active).map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select></div>${fld('pref','ref')}</div>
+ <div class="row"><div><label>${t('name')}</label><select id="pm1">${S.meds.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('')}</select></div>${fld('pl','lot')}${fld('pmf','mfg','date')}${fld('pex','expd','date')}${fld('pq','qty','number')}${fld('pc','buy','number')}<button class="btn" onclick="addP()">${t('add')}</button></div>
+ <table>${pcart.map((c,i)=>`<tr><td>${esc(c.name)}</td><td>${esc(c.lot)}</td><td>${c.exp}</td><td>${c.qty}</td><td>${nf(c.cost)}</td><td><button class="btn sm r" onclick="pcart.splice(${i},1);draw()">✕</button></td></tr>`).join('')}</table>
+ <div class="row"><div><label>${t('pay')}</label><select id="pst"><option value="paid">${t('paid')}</option><option value="part">${t('part')}</option><option value="unpaid">${t('unpaid')}</option></select></div>${fld('ppd','paid','number',0)}<button class="btn g" onclick="conf()">${t('confirm')} — ${cur(cs)}</button></div></div>
+ <div class="card tw"><table>${S.purch.slice().reverse().map(p=>`<tr><td>${p.no}</td><td>${p.date}</td><td>${esc(supName(p.sup))}</td><td>${cur(p.total)}</td><td>${t(p.status)}</td></tr>`).join('')||`<tr><td class="mut">${t('empty')}</td></tr>`}</table></div>`},
+sup(){return `<div class="row"><button class="btn g" onclick="supForm()">＋ ${t('add')}</button><button class="btn o" onclick="csv('sup')">${t('export')}</button></div><div class="card tw"><table><tr><th>#</th><th>${t('name')}</th><th>${t('contact')}</th><th>${t('phone')}</th><th>${t('terms')}</th><th>${t('bal')}</th><th>${t('status')}</th><th>${t('act')}</th></tr>
+ ${S.sups.map(s=>{const o=S.purch.filter(p=>p.sup==s.id&&p.confirmed).reduce((a,p)=>a+p.total-p.paid,0);return `<tr><td>${s.id}</td><td>${esc(s.name)}</td><td>${esc(s.contact)}</td><td>${esc(s.phone)}</td><td>${esc(s.terms)}</td><td>${cur(o)}</td><td>${s.active?t('active'):'—'}</td><td><button class="btn sm o" onclick="supForm(${s.id})">${t('edit')}</button> <button class="btn sm o" onclick="S.sups.find(x=>x.id==${s.id}).active^=1;save();draw()">⏻</button></td></tr>`}).join('')||`<tr><td colspan="8" class="mut">${t('empty')}</td></tr>`}</table></div>`},
+rep(){
+ const f=window.rf||today().slice(0,8)+'01',e=window.re||today();
+ const ss=inSale(f,e),ok=ss.filter(s=>!s.refunded),rf=ss.filter(s=>s.refunded);
+ const g=ok.reduce((a,s)=>a+s.sub,0),dc=ok.reduce((a,s)=>a+s.disc,0),rv=rf.reduce((a,s)=>a+s.total,0);
+ const cg=ok.reduce((a,s)=>a+s.items.reduce((x,i)=>x+i.qty*i.cost,0),0),net=g-dc;
+ const by={};ok.forEach(s=>s.items.forEach(i=>by[i.name]=(by[i.name]||0)+i.qty*i.sell));
+ return `<div class="row"><div><label>${t('from')}</label><input type="date" value="${f}" onchange="rf=this.value;draw()"></div><div><label>${t('to')}</label><input type="date" value="${e}" onchange="re=this.value;draw()"></div><button class="btn o" onclick="csv('sales')">${t('export')}</button></div>
+ <div class="grid">${[['gross',g],['disc',dc],['refs',rv],['cogs',cg],['profit',net-cg]].map(([k,v])=>`<div class="card kpi"><span>${t(k)}</span><b>${cur(v)}</b></div>`).join('')}</div>
+ <div class="card tw"><b>${t('sell')}</b><table>${Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`<tr><td>${esc(n)}</td><td>${cur(v)}</td></tr>`).join('')||`<tr><td class="mut">${t('empty')}</td></tr>`}</table></div>
+ <div class="card tw"><b>${t('alerts')}</b><table>${S.meds.filter(m=>st(m)!=='ok').map(m=>`<tr><td>${esc(m.name)}</td><td>${tot(m)}</td><td>${tag(st(m))}</td></tr>`).join('')}</table></div>
+ <p class="mut">${S.set.lang==='ar'?'تاريخ التقرير':'Generated'}: ${new Date().toLocaleString()} (${f} → ${e})<br>${DEV()}</p>`},
+set(){return `<div class="card"><div class="row">${fld('sn','pname','text',S.set.name)}${fld('sw','warn','number',S.set.warn)}${fld('st','tax','number',S.set.tax)}<div><label>Theme</label><select id="th"><option value="">Auto</option><option value="light" ${S.set.theme==='light'?'selected':''}>Light</option></select></div></div><button class="btn g" onclick="setSave()">${t('save')}</button> <button class="btn r" onclick="if(confirm('?')){S=init();save();draw()}">${t('reset')}</button></div><p class="mut">${t('proto')}</p><div class="card" style="text-align:center">${DEV()}</div>`}};
+function fi(){const p=$('#app');const c=document.activeElement.id;draw();const e=$('#'+c);if(e){e.focus();e.setSelectionRange(99,99)}}
+function setSave(){S.set.name=val('sn')||S.set.name;S.set.warn=+val('sw')||90;S.set.tax=+val('st')||0;S.set.theme=val('th');save();draw();toast('✔')}
+function medForm(id){
+ const m=S.meds.find(x=>x.id===id)||{};
+ modal(`<h3>${t(id?'edit':'add')}</h3><div class="row">${fld('f1','name','text',m.name)}${fld('f2','gen','text',m.gen)}${fld('f3','bc','text',m.bc)}${fld('f4','cat','text',m.cat)}${fld('f5','buy','number',m.buy)}${fld('f6','sell','number',m.sell)}${fld('f7','min','number',m.min??5)}<div><label>${t('supp')}</label><select id="f8"><option value=""></option>${S.sups.map(s=>`<option value="${s.id}" ${m.sup==s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></div>${id?'':fld('f9','qty','number',0)+fld('fa','lot')+fld('fb','mfg','date')+fld('fc','expd','date')}${fld('fd','desc','text',m.desc)}</div><button class="btn g" onclick="medSave(${id||0})">${t('save')}</button> <button class="btn o" onclick="close()">${t('cancel')}</button>`)}
+function medSave(id){
+ const m={name:val('f1'),gen:val('f2'),bc:val('f3'),cat:val('f4'),buy:+val('f5'),sell:+val('f6'),min:+val('f7'),sup:val('f8'),desc:val('fd')};
+ const ar=S.set.lang==='ar';
+ if(!m.name||!(m.buy>=0)||!(m.sell>=0))return toast(ar?'أكمل الحقول المطلوبة وأسعارًا صحيحة':'Fill required fields with valid prices');
+ if(m.bc&&S.meds.some(x=>x.bc===m.bc&&x.id!==id))return toast(ar?'الباركود مكرر':'Duplicate barcode');
+ if(id)Object.assign(S.meds.find(x=>x.id===id),m);
+ else{const qn=+val('f9')||0,mf=val('fb'),ex=val('fc');
+  if(qn<0)return toast(ar?'كمية سالبة':'Negative stock');
+  if(qn>0&&(!ex||(mf&&ex<=mf)))return toast(ar?'تاريخ الانتهاء يجب أن يكون بعد الإنتاج':'Expiry must be after manufacturing date');
+  m.id=Math.max(0,...S.meds.map(x=>x.id))+1;m.batches=qn>0?[{lot:val('fa')||'B1',mfg:mf,exp:ex,qty:qn}]:[];S.meds.push(m);
+  if(qn>0)S.mov.push({date:today(),med:m.name,qty:qn,type:'add',reason:'initial'})}
+ save();close();draw()}
+function delMed(id){if(S.sales.some(s=>s.items.some(i=>i.id===id))||S.purch.some(p=>p.items.some(i=>i.id===id)))return toast(S.set.lang==='ar'?'لا يمكن الحذف: له حركات':'Cannot delete: has transactions');if(confirm('?')){S.meds=S.meds.filter(m=>m.id!==id);save();draw()}}
+function supForm(id){const s=S.sups.find(x=>x.id===id)||{};modal(`<h3>${t('sup')}</h3><div class="row">${fld('s1','name','text',s.name)}${fld('s2','contact','text',s.contact)}${fld('s3','phone','text',s.phone)}${fld('s4','email','email',s.email)}${fld('s5','terms','text',s.terms)}</div><button class="btn g" onclick="supSave(${id||0})">${t('save')}</button> <button class="btn o" onclick="close()">${t('cancel')}</button>`)}
+function supSave(id){const o={name:val('s1'),contact:val('s2'),phone:val('s3'),email:val('s4'),terms:val('s5')};if(!o.name)return toast('!');if(id)Object.assign(S.sups.find(x=>x.id===id),o);else S.sups.push({...o,id:Math.max(0,...S.sups.map(x=>x.id))+1,active:1});save();close();draw()}
+function find(v){v=v.toLowerCase();return S.meds.find(m=>m.bc===v)||S.meds.find(m=>m.name.toLowerCase().includes(v)||(m.gen||'').toLowerCase().includes(v))}
+function addCart(el){
+ const v=el.value.trim();if(!v)return;const m=find(v),ar=S.set.lang==='ar';
+ if(!m)return toast(ar?'باركود/دواء غير معروف':'Unknown barcode or medicine');
+ const c=cart.find(x=>x.id===m.id),nq=(c?c.qty:0)+1;
+ if(m.batches.some(b=>b.qty>0&&isExp(b))&&sellable(m)===0)return toast(ar?'منتهي الصلاحية — لا يمكن بيعه':'Expired — cannot be sold');
+ if(nq>sellable(m))return toast(ar?'الكمية تتجاوز المتاح':'Exceeds available stock');
+ if(c)c.qty=nq;else cart.push({id:m.id,name:m.name,sell:m.sell,cost:m.buy,qty:1});draw();$('#ps').focus()}
+function cq(i,v){const c=cart[i],m=S.meds.find(x=>x.id===c.id);v=Math.max(1,+v|0);if(v>sellable(m)){toast(S.set.lang==='ar'?'الكمية تتجاوز المتاح':'Exceeds available stock');v=sellable(m)}c.qty=v;draw()}
+function calc(){const sub=cart.reduce((a,c)=>a+c.qty*c.sell,0),d=Math.min(sub,+($('#dc')||{}).value||0),tx=+($('#tx')||{}).value||0;return{sub,disc:d,tax:(sub-d)*tx/100,total:(sub-d)*(1+tx/100)}}
+function pt(){const c=calc();$('#tt').textContent=cur(c.total);$('#ch').textContent=cur(Math.max(0,(+$('#rc').value||0)-c.total))}
+function sale(){
+ if(!cart.length)return;const c=calc(),items=[];
+ for(const ci of cart){const m=S.meds.find(x=>x.id===ci.id);if(ci.qty>sellable(m))return toast(S.set.lang==='ar'?'الكمية تتجاوز المتاح':'Exceeds available stock')}
+ cart.forEach(ci=>{const m=S.meds.find(x=>x.id===ci.id);let r=ci.qty;const al=[];
+  m.batches.filter(b=>!isExp(b)&&b.qty>0).sort((a,b)=>a.exp<b.exp?-1:1).forEach(b=>{const u=Math.min(r,b.qty);if(u>0){b.qty-=u;r-=u;al.push({lot:b.lot,exp:b.exp,qty:u})}});
+  items.push({...ci,alloc:al});S.mov.push({date:today(),med:m.name,qty:-ci.qty,type:'sale',reason:'POS'})});
+ const no='INV-'+String(S.sales.length+1).padStart(5,'0');
+ S.sales.push({no,date:new Date().toISOString(),items,sub:c.sub,disc:c.disc,tax:c.tax,total:c.total,pay:$('#pm').value,refunded:false});
+ cart=[];save();draw();toast('✔ '+no)}
+function refund(no){if(!confirm('?'))return;const s=S.sales.find(x=>x.no===no);s.items.forEach(i=>{const m=S.meds.find(x=>x.id===i.id);if(!m)return;i.alloc.forEach(a=>{const b=m.batches.find(x=>x.lot===a.lot&&x.exp===a.exp);if(b)b.qty+=a.qty;else m.batches.push({lot:a.lot,mfg:'',exp:a.exp,qty:a.qty})});S.mov.push({date:today(),med:m.name,qty:i.qty,type:'refund',reason:no})});s.refunded=true;save();draw()}
+function addP(){
+ const m=S.meds.find(x=>x.id==val('pm1')),o={id:m&&m.id,name:m&&m.name,lot:val('pl'),mfg:val('pmf'),exp:val('pex'),qty:+val('pq'),cost:+val('pc')},ar=S.set.lang==='ar';
+ if(!m||!o.lot||!o.exp||!(o.qty>0)||!(o.cost>=0))return toast(ar?'أكمل بيانات الصنف':'Complete item data');
+ if(o.mfg&&o.exp<=o.mfg)return toast(ar?'تاريخ الانتهاء يجب أن يكون بعد الإنتاج':'Expiry must be after manufacturing date');
+ pcart.push(o);draw()}
+function conf(){
+ if(!pcart.length||!$('#psup').value)return toast(S.set.lang==='ar'?'أضف مورّدًا وأصنافًا':'Add a supplier and items');
+ const total=pcart.reduce((a,c)=>a+c.qty*c.cost,0),stt=val('pst'),paid=stt==='paid'?total:stt==='part'?Math.min(total,+val('ppd')||0):0;
+ pcart.forEach(c=>{const m=S.meds.find(x=>x.id===c.id),b=m.batches.find(x=>x.lot===c.lot&&x.exp===c.exp);if(b)b.qty+=c.qty;else m.batches.push({lot:c.lot,mfg:c.mfg,exp:c.exp,qty:c.qty});m.buy=c.cost;S.mov.push({date:today(),med:m.name,qty:c.qty,type:'purchase',reason:c.lot})});
+ S.purch.push({no:'PUR-'+String(S.purch.length+1).padStart(4,'0'),date:today(),sup:+val('psup'),ref:val('pref'),items:pcart,total,status:stt,paid,confirmed:true});
+ pcart=[];save();draw();toast('✔')}
+function csv(k){let r;if(k==='inv')r=[['ID','Name','Barcode','Category','Qty','Sell','Status']].concat(S.meds.map(m=>[m.id,m.name,m.bc,m.cat,tot(m),m.sell,st(m)]));else if(k==='sup')r=[['ID','Name','Phone']].concat(S.sups.map(s=>[s.id,s.name,s.phone]));else r=[['Invoice','Date','Total','Refunded']].concat(S.sales.map(s=>[s.no,s.date,s.total,s.refunded]));
+ const b=new Blob(['\ufeff'+r.map(x=>x.map(c=>'"'+String(c??'').replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=k+'.csv';a.click()}
+function sample(){const y=n=>new Date(Date.now()+n*864e5).toISOString().slice(0,10);
+ S.sups=[{id:1,name:'شركة الدواء المتحدة',contact:'خالد',phone:'0500000000',email:'',terms:'30',active:1}];
+ S.meds=[{id:1,name:'بنادول 500',gen:'Paracetamol',bc:'6281001',cat:'مسكنات',buy:6,sell:9,min:10,sup:'1',desc:'',batches:[{lot:'A1',mfg:y(-300),exp:y(400),qty:40}]},
+ {id:2,name:'أموكسيل 500',gen:'Amoxicillin',bc:'6281002',cat:'مضادات حيوية',buy:14,sell:22,min:10,sup:'1',desc:'',batches:[{lot:'B7',mfg:y(-200),exp:y(40),qty:6},{lot:'B9',mfg:y(-100),exp:y(300),qty:20}]},
+ {id:3,name:'فولتارين',gen:'Diclofenac',bc:'6281003',cat:'مسكنات',buy:11,sell:17,min:5,sup:'1',desc:'',batches:[{lot:'C2',mfg:y(-500),exp:y(-5),qty:8}]}];save();draw()}
+draw();
+</script>
+</body>
+</html>
